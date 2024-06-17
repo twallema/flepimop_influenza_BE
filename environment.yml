@@ -1,0 +1,24 @@
+name: FLEPIMOP_INFLUENZA
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - scipy
+  - pandas
+  - numpy
+  - numba
+  - matplotlib
+  - xarray
+  - emcee
+  - h5py  
+  - corner
+  - tqdm
+  - click
+  - confuse
+  - pyarrow
+  - sympy
+  - dask
+  - pytest
+  - boto3
+  - slack_sdk
