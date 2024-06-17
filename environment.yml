@@ -9,12 +9,10 @@ dependencies:
   - numpy
   - numba
   - matplotlib
-
   - xarray
   - emcee
   - h5py  
   - corner
-
   - tqdm
   - click
   - confuse
@@ -22,6 +20,5 @@ dependencies:
   - sympy
   - dask
   - pytest
-
- - boto3
- - slack_sdk
+  - boto3
+  - slack_sdk
