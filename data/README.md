@@ -2,6 +2,11 @@
 
 ## Raw
 
+### Vaccines
+
++ `antoine_etal_archpublichealth_2010` : Title: 'Influenza vaccination recording system in Belgium'. Of interest: Table 1. Reported vaccination coverage by age group, situation on 31 March 2010.
++ `goeyvaerts_etal_epidemics_2015.pdf` : Title: 'Estimating dynamic transmission model parameters for seasonal influenza by fitting to age and season-specific influenza-like illness incidence'. Of interest: Section 2.2.4 Vaccination coverage and vaccine efficacy.
+
 ### Cases
 
 #### 2017-2018
