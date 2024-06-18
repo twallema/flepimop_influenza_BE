@@ -1,0 +1,299 @@
+---
+title: "Mobility_Models_District_redistributed"
+output: html_document
+date: "2024-03-20"
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+library(ggplot2)
+library(reshape2)
+library(viridis)
+library(ggstance)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  autodep=TRUE
+)
+library(gridExtra)
+library(grid)
+```
+
+# Computing the distance matrix between districts
+
+## Loading the Belgian census mobility data - this is our mobility matrix $M$
+
+```{r mobility data from excel}
+library(readxl)
+mob <- as.data.frame(read_xlsx("../../data/raw/census/Census_mobility_Districts_20MAR2024.xlsx", skip = 2))
+
+# this file contains the district data after redistribution of the columns "province XX, town and district unknown" using the destination population as weights
+# --> Tijs: Where did you do this? Where is the raw file?
+
+mob <- mob[,-c(1,2)]
+rownames(mob) <- colnames(mob)
+```
+
+## Loading the demographic data for the population counts per district - this will be our demographic matrix $N$
+
+```{r population matrices also from excel}
+demo <- read_xlsx("../../data/raw/census/Census_Demo_adjusted.xlsx", sheet="Arrondissement")
+demo <- demo[-1,]
+colnames(demo) <- c("NISCode", "NameDut", "inhabitants")
+demo <- demo[order(demo$NISCode, decreasing = FALSE),]
+```
+
+## Build distance matrix
+
+To build mobility models the distances between the centroids of the spatial patches in the mobility matrix ($M$) are needed.
+
+```{r loading the shape files, echo=FALSE}
+library(sf)
+shapefile <- st_read("../../data/raw/shape/georef-belgium-municipality-millesime.shp")
+#shapefile <- st_read("../../data/raw/shape/districts/AD_3_District.shp")
+
+# .shp/.shx --> needed to load shape
+# .prj --> contains info on projection
+# .dbf --> contains the data
+
+# throw out useless columns
+shapefile <- shapefile[, c('NISCode','NameDut','NameFre','NameGer','geometry')]
+
+# order for clarity
+shapefile <- shapefile[order(shapefile$NISCode, decreasing = FALSE),]
+
+# compute distance matrixb (long!)
+D <- as.data.frame(st_distance(shapefile)) 
+colnames(D) <- shapefile$NISCode
+rownames(D) <- colnames(D)
+
+# drop units 'meters'
+library(units)
+D <- drop_units(D)
+```
+
+# District-level data is not up-to-date with current Belgian administrative units
+
+District-level demography file has NIS 54000 'Moeskroen' but not NIS 58000 'La louviere'. Shapefile has NIS 54000 but not 58000.
+
+In 2019 NIS 54000 'Moeskroen' and NIS 57000 'Doornik' were merged into NIS 57000 'Doornik-Moeskroen'. Further, the arrondissement La Louviere was formed by merging La Louviere from the Arrondissement Zinnik, along with Municipalities Binche, Estinnes and Norlanwelz from the Arrondissment Thuin.
+
+## Correcting the demo and mob data for districts based on municipality data
+
+### OVERVIEW TO DO: Fix aggregation
+
+#### Demography
+
+-   Current output: La Louviere (58000) has 88470 inhabitants. Reality: 137000 inhabitants in 2010
+-   Current output: Doornik-Moeskroen (57000) has 280000 inhabitants. Reality: 215000 inhabitants
+
+#### Shapefiles
+
+-   Merge Arrondissements Doornik and Moeskroen
+-   Merge Municipalities La Louviere, Binche, Estinnes and Norlanwelz
+
+```{r loading municipality mobility and demo data}
+demo <- as.data.frame(read_xlsx("../../data/raw/census/Demo_Municipalities_corrected_29MAR2024.xlsx"))
+colnames(demo) <- c("NISCode", "NameDut", "inhabitants")
+demo <- demo[order(demo$NISCode, decreasing = FALSE),]
+
+mob <- as.data.frame(read_xlsx("../../data/raw/census/Mob_Municipalities_corresponding_to_shapefiles_ordered_withNIS_2APR2024.xlsx"))
+# Q: beschrijving van hoe ruwe file aangepast
+rownames(mob) <- mob$NIS
+mob <- mob[-1,-c(1,2)]
+colnames(mob) <- rownames(mob)
+```
+
+### FIX: Aggregate the DEMOGRAPHIC municipality data into district data based on NIScodes
+
+```{r aggregation to district level}
+NIS_Distr_shapefile <- shapefile$NISCode
+demo_with_redistributioncodes <- demo
+demo_with_redistributioncodes$DistrictNIS <- NA 
+
+# for every municipality I will loop through the district file, if the first 2 letters of my municipality NIScode correspond to the first 2 letters of my district code, then this is the district in which the municipality is 
+
+for(municipality in 1:nrow(demo_with_redistributioncodes)){
+  first_2_munic <- substr(rownames(demo_with_redistributioncodes)[municipality], start = 1, stop = 2)
+  for(district in 1:length(NIS_Distr_shapefile)){
+    first_2_distr <- substr(NIS_Distr_shapefile[district], start = 1, stop = 2)
+    if(isTRUE(first_2_distr == first_2_munic)){
+      demo_with_redistributioncodes$DistrictNIS[municipality] <- NIS_Distr_shapefile[district]
+    }
+  }
+}
+
+length(unique(demo_with_redistributioncodes$DistrictNIS)) # 43
+setdiff(unique(demo_with_redistributioncodes$DistrictNIS), shapefile$NISCode) # 0
+setdiff(shapefile$NISCode, unique(demo_with_redistributioncodes$DistrictNIS)) # 0
+
+# Aggregate the demo into the district levels
+summed_df <- aggregate(inhabitants ~ DistrictNIS, data = demo_with_redistributioncodes, FUN = sum)
+
+# let me read in the district demo file to compare to this aggregated file: 
+demoDistr <- read_xlsx("../../data/raw/census/Census_Demo_adjusted.xlsx", sheet="Arrondissement")
+demoDistr <- demoDistr[-1, -2]
+colnames(demoDistr) <- c("places", "inhabitants")
+
+diff <- summed_df$inhabitants - demoDistr$inhabitants
+names(diff) <- summed_df$DistrictNIS
+print(diff) # districts 71000 and 72000 show -10127,  10127 respectively, which is strange. It seems like there are 10127 inhabitants that in the summed version are grouped to the district 72000, but in the district file pertain to 71000, this makes sense seeing as the 4 of the municipalities with corrections were between 71000 and 72000
+demo <- summed_df
+placenames <- demo$DistrictNIS
+demo$DistrictNIS <- NULL
+rownames(demo) <- placenames
+
+rm(demo_with_redistributioncodes, summed_df, demoDistr, diff)
+```
+
+### ADD: Merge arrondissement shapefiles
+
+### FIX: Aggregate the MOBILITY municipality data into district data based on NIScodes
+
+```{r aggregation mobility municipality data to district}
+# same process as with demo data
+mob_with_distrNIS <- mob
+mob_with_distrNIS$DistrictNIS <- NA
+
+# Create a new row with NA values and set its name
+new_row_name <- "DistrictNIS"
+
+new_row <- data.frame(matrix(NA, ncol = ncol(mob_with_distrNIS), nrow = 1))
+row.names(new_row) <- new_row_name
+colnames(new_row) <- colnames(mob_with_distrNIS)
+mob_with_distrNIS <- rbind(new_row, mob_with_distrNIS)
+
+#bring the last column with DistrictNIS to the front
+last_column_name <- "DistrictNIS"
+mob_with_distrNIS <- mob_with_distrNIS[, c(last_column_name, setdiff(names(mob_with_distrNIS), last_column_name))]
+
+#1. add the district NIS codes
+for(municipality in 1:nrow(mob_with_distrNIS)){
+  first_2_munic <- substr(rownames(mob_with_distrNIS)[municipality], start = 1, stop = 2)
+  for(district in 1:length(NIS_Distr_shapefile)){
+    first_2_distr <- substr(NIS_Distr_shapefile[district], start = 1, stop = 2)
+    if(isTRUE(first_2_distr == first_2_munic)){
+      mob_with_distrNIS$DistrictNIS[municipality] <- NIS_Distr_shapefile[district]
+    }
+  }
+}
+
+# now I copy these values to the columns 
+mob_with_distrNIS[1,] <- mob_with_distrNIS$DistrictNIS
+
+## AGGREGATE THE MOBILITY DATA BASED ON THE DISTRICT NIS CODES
+# Convert all values in the dataframe to numeric
+mob_with_distrNIS[, -1] <- lapply(mob_with_distrNIS[, -1], as.numeric) # exclude the first column DistrictNIS
+
+# Exclude the first row and column from aggregation
+numeric_columns <- setdiff(names(mob_with_distrNIS), c("DistrictNIS"))
+
+# Sum the rows with the same DistrictNIS value 
+row_sums_by_DistrictNIS <- aggregate(mob_with_distrNIS[, numeric_columns], 
+                                        by = list(DistrictNIS = mob_with_distrNIS$DistrictNIS), 
+                                        FUN = sum)
+
+row_sums_by_DistrictNIS_t <- as.data.frame(t(row_sums_by_DistrictNIS))
+row_sums_by_DistrictNIS_t$DistrictNIS <- mob_with_distrNIS$DistrictNIS # the districtNIS value disappeared in the aggregation step
+
+last_column_name <- "DistrictNIS"
+row_sums_by_DistrictNIS_t <- row_sums_by_DistrictNIS_t[, c(last_column_name, setdiff(names(row_sums_by_DistrictNIS_t), last_column_name))]
+row_sums_by_DistrictNIS_t[, -1] <- lapply(row_sums_by_DistrictNIS_t[, -1], as.numeric) # exclude the first column DistrictNIS
+
+col_sums_by_DistrictNIS <- aggregate(row_sums_by_DistrictNIS_t[, -1], 
+                                      by = list(DistrictNIS = row_sums_by_DistrictNIS_t$DistrictNIS), 
+                                      FUN = sum)
+DistrictNISnames <- col_sums_by_DistrictNIS$DistrictNIS
+rownames(col_sums_by_DistrictNIS) <- DistrictNISnames
+col_sums_by_DistrictNIS <- col_sums_by_DistrictNIS[,-1]
+colnames(col_sums_by_DistrictNIS) <- DistrictNISnames
+
+# I still need to transform the mobility matrix back: 
+mob <- as.data.frame(t(col_sums_by_DistrictNIS))
+
+setdiff(shapefile$NISCode, colnames(mob)) # 0
+setdiff(colnames(mob), shapefile$NISCode) # 0
+# good :)
+```
+
+Note that since the distance matrix ($D$) and population vector ($N$) are covariates used by models, they cannot have missing values and must all have matching dimensions. Code below checks that all data dimensions match.
+
+```{r checking dimentions of matrices correspond}
+N <- as.matrix(demo)
+M <- as.matrix(mob) #
+
+# check
+all(
+     sapply(list(dim(D)[1], length(N)), FUN = identical, dim(M)[1]),
+     sapply(list(dimnames(D)$origin, names(N)), FUN = identical, dimnames(M)$origin)
+) # this is returning FALSE ...
+
+print(dim(D)[1]==length(N))
+part2 <- sapply(list(dimnames(D)$origin, names(N)), FUN = identical, dimnames(M)$origin)
+print(part2) #TRUE FALSE
+
+row_match <- all(rownames(D) == rownames(M))
+col_match <- all(colnames(D) == colnames(M))
+print(row_match) #OK
+print(col_match) #OK
+
+part1 <- sapply(list(dim(D)[1], length(N)), FUN = identical, dim(M)[1])
+print(part1) # [1] TRUE TRUE
+
+part2 <- sapply(list(dimnames(D)$origin, names(N)), FUN = identical, dimnames(M)$origin)
+print(part2) #[1]  FALSE FALSE
+names(N) <- rownames(demo)
+
+origins <- rownames(M)
+desintations <- colnames(M)
+dimnames(M) <- list(origin = origins, destination = desintations)
+part2 <- sapply(list(dimnames(D)$origin, names(N)), FUN = identical, dimnames(M)$origin)
+print(part2) #[1] TRUE TRUE
+```
+
+Listing the 3 matrices to obtain the correct format for the mobility function.
+
+```{r listing the matrices}
+colnames(N) <- NULL
+str(N)
+matrix_list <- NULLmatrix_list <- list(M = M, D = D, N = N)
+str(matrix_list)
+matrix_list$N <- matrix_list$N[1:43]
+
+str(matrix_list) # correct format now
+saveRDS(matrix_list, "matrix_list.rds")
+```
+
+### ADD: Output correct district-level demography, mobility and shapefiles
+
+
+## Visualise results
+
+```{r census NIS-codes data_plot_1, fig.height=10, fig.width=10}
+
+melted_M <- melt(matrix_list$M)
+melted_M$destination <- factor(melted_M$destination, levels = levels(factor(melted_M$destination)))
+melted_M$origin <- factor(melted_M$origin, levels = rev(levels(factor(melted_M$origin))))
+
+ggplot(data=melted_M) +
+  geom_tile(aes(x=factor(destination),
+                y=factor(origin),
+                fill=log(value))) +
+  xlab('Destination') + ylab("Origin") +
+    labs(title = "Census mobility data (Districts)")+
+  theme_bw() + theme(plot.title = element_text(size = 18, hjust = 0.5),
+                     axis.text.x=element_text(size=10, angle=90, hjust=1, vjust= 0.5),
+                     axis.text.y=element_text(size=10),
+                     axis.title.x=element_text(size=12, margin = margin(t = 15)),
+                     axis.title.y=element_text(size=12, margin = margin(r = 15)),
+                     legend.position='bottom') +
+  viridis::scale_fill_viridis(option='viridis', direction=1, limits = c(-5, 15)) +
+  guides(fill=guide_colorbar(title='log(Observed number of trips census)',
+                             title.position='top',
+                             label.theme=element_text(size=9),
+                             barwidth=20,
+                             barheight=0.5,
+                             frame.colour='black',
+                             ticks=TRUE))
+ggsave("MobMatrix_BE_District_Census_NIS_23APR2024.png")
+```
