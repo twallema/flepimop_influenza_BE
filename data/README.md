@@ -44,6 +44,9 @@ Folder contains the shape files of the 581 Belgian municipalities. Retrieved fro
 + `demography_municipalities_2011.xlsx` : contains the total number of inhabitants for the 581 municipalities of Belgium (edited by Rita Verstraeten to include the 2019 fusions). Based on the 2011 census data located in `data/raw/census/census_demo_nl_04nov14.xlsx`. Made by Rita Verstraten. Total number of inhabitants per municipality can be used to normalise the commuter's origin-destination matrix. # TODO: Rita should include her conversion scripts in this repository.
 + `mobility_municipalities_2011.xlsx` : contains the number of inhabitants of municipality i that commute to municipality j. For the 581 municipalities of Belgium (edited by Rita Verstraeten to include the 2019 fusions). Based on the 2011 census data located in `data/raw/census/Pop_LPW_NL_25FEB15.xlsx`. Made by Rita Verstraten. # TODO: Rita should include her conversion scripts in this repository.
 
++ `mobility_municipalities_2011_sorted.csv` : Names of municipalities have been ommitted in favor of NIS codes. Matrix sorted by means of the following python code: `df.sort_index().sort_index(axis=1)`.
++ `demography_municipalities_2011_sorted.csv` : Names of municipalities have been ommitted in favor of NIS codes, sorted.
+
 ### Cases
 
 #### 2017-2018
