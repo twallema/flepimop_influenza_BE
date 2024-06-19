@@ -62,3 +62,7 @@ Folder contains the shape files of the 581 Belgian municipalities. Retrieved fro
 + `ILI_weekly_100K.csv` : Weekly incidence of GP visits for Influenza-like illness per 100K inhabitants in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `analysis/data_conversion/format_cases.py`.
 
 + `ILI_weekly_ABS.csv` : Weekly incidence of GP visits for Influenza-like illness in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `analysis/data_conversion/format_cases.py`.
+
+## Conversion
+
+Contains the scripts used to convert 'raw' to 'interim' data.
