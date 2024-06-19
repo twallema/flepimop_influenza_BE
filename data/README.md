@@ -2,6 +2,14 @@
 
 ## Raw
 
+### Social contacts
+
++ `social_contacts_holiday_week.xlsx` : Social contact data for Belgium, sheets were used to denote contact duration. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/). Dataset: Belgium 2010 (Van Hoang 2020). Contacts Mon-Fri (holidays). Includes physical contacts only. An integration of the contacts with the contact duration is performed in the sheet named 'integrated'. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/).
+
++ `social_contacts_noholiday_week.xlsx` : Social contact data for Belgium, sheets were used to denote contact duration. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/). Dataset: Belgium 2010 (Van Hoang 2020). Contacts Mon-Fri (excl. holidays). Includes physical contacts only. An integration of the contacts with the contact duration is performed in the sheet named 'integrated'. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/).
+
++ `social_contacts_weekend.xlsx` : Social contact data for Belgium, sheets were used to denote contact duration. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/). Dataset: Belgium 2010 (Van Hoang 2020). Contacts Sat-Sun. Includes physical contacts only. An integration of the contacts with the contact duration is performed in the sheet named 'integrated'. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/).
+
 ### Vaccines
 
 + `antoine_etal_archpublichealth_2010` : Title: 'Influenza vaccination recording system in Belgium'. Of interest: Table 1. Reported vaccination coverage by age group, situation on 31 March 2010.
