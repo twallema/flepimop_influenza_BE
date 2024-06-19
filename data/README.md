@@ -41,11 +41,11 @@ Folder contains the shape files of the 581 Belgian municipalities. Retrieved fro
 
 ### Vaccination
 
-+ `vaccination_municipalities_2010.csv` : contains the vaccination coverage in all 581 (post-2019 fusion) Belgian municipality and per age group (0-5, 5-15, 15-65, 65+). All municipalities located in the same region have the same vaccination coverage. However, vaccination coverage differs significantly per Belgian region: Flanders (10.2%), Wallonia (1.5%) and Brussels (1.9%). Made using the data in Table 1 of `data/raw/literature/antoine_etal_archpublichealth_2010.pdf` using the script `analysis/data_conversion/make_vaccination_coverage.py`.
++ `vaccination_municipalities_2010.csv` : contains the vaccination coverage in all 581 (post-2019 fusion) Belgian municipality and per age group (0-5, 5-15, 15-65, 65+). All municipalities located in the same region have the same vaccination coverage. However, vaccination coverage differs significantly per Belgian region: Flanders (10.2%), Wallonia (1.5%) and Brussels (1.9%). Made using the data in Table 1 of `data/raw/literature/antoine_etal_archpublichealth_2010.pdf` using the script `data/conversion/make_vaccination_coverage.py`.
 
 ### Demography
 
-+ `demography_municipalities_2017.csv` : contains the number of inhabitants in age groups 0-5, 5-15, 15-65, 65+ in all 581 Belgian municipalities (post-2019 fusions). Generated from `data/raw/demography/TF_SOC_POP_STRUCT_2017.xlsx` with `analysis/data_conversion/format_demography.py`.
++ `demography_municipalities_2017.csv` : contains the number of inhabitants in age groups 0-5, 5-15, 15-65, 65+ in all 581 Belgian municipalities (post-2019 fusions). Generated from `data/raw/demography/TF_SOC_POP_STRUCT_2017.xlsx` with `data/conversion/format_demography.py`.
 
 ### Belgian Census 2011
 
@@ -59,9 +59,9 @@ Folder contains the shape files of the 581 Belgian municipalities. Retrieved fro
 
 #### 2017-2018
 
-+ `ILI_weekly_100K.csv` : Weekly incidence of GP visits for Influenza-like illness per 100K inhabitants in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `analysis/data_conversion/format_cases.py`.
++ `ILI_weekly_100K.csv` : Weekly incidence of GP visits for Influenza-like illness per 100K inhabitants in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `data/conversion/format_cases.py`.
 
-+ `ILI_weekly_ABS.csv` : Weekly incidence of GP visits for Influenza-like illness in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `analysis/data_conversion/format_cases.py`.
++ `ILI_weekly_ABS.csv` : Weekly incidence of GP visits for Influenza-like illness in Belgium during the 2017-2018 season. Data available for four age groups: [0,5(, [5,15(, [15,65(, [65,120(. Dates are the reported week number's midpoint. Generated from `ILI_weekly_1718.csv` by executing the data conversion script `data`/conversion/format_cases.py`.
 
 ## Conversion
 
