@@ -55,13 +55,13 @@ class spatial_TL_SIR(JumpProcess):
     """
     SIR stochastic model with a spatial stratification
     """
-    states = ['S', 'S_work','I','R']
+    states = ['S', 'S_v','I','R']
     parameters = ['beta','gamma', 'f_v', 'N', 'M']
     dimensions = ['age', 'location']
 
 
     @staticmethod
-    def compute_rates(t, S, S_work, I, R, beta, gamma, f_v, N, M):
+    def compute_rates(t, S, S_v, I, R, beta, gamma, f_v, N, M):
 
         # calculate total population 
         T = S + I + R
@@ -78,35 +78,35 @@ class spatial_TL_SIR(JumpProcess):
         rates = {
 
             'S': [beta * np.transpose(matmul_2D_3D_matrix(np.transpose(I/T), (1-f_v)*N))], # 
-            'S_work': [beta * np.transpose(matmul_2D_3D_matrix(np.transpose(I_v/T_v), f_v*N))],
+            'S_v': [beta * np.transpose(matmul_2D_3D_matrix(np.transpose(I_v/T_v), f_v*N))],
             'I': [size_dummy*(1/gamma)], # 
 
             }
+        
         return rates
-    
-
 
     @ staticmethod
-    def apply_transitionings(t, tau, transitionings, S, S_work, I, R, 
+    def apply_transitionings(t, tau, transitionings, S, S_v, I, R, 
                              beta, f_v, gamma, 
                              N, M):
         
         # distribute the number of new infections on visited patch to the home patch 
-        S_work_to_home = S * np.transpose(np.atleast_2d(M) @ np.transpose(transitionings['S_work'][0]/S_work))
+        S_v_to_home = S * np.transpose(np.atleast_2d(M) @ np.transpose(transitionings['S_v'][0]/S_v))
         # the resulting matrix is an N x M matrix with each element of row n, column m representing the total number of people infected from work that need to be returned to age-group n, location m. 
         
         
         ###################################################
-        ##### CREATE THE NEW VALUES FOR S, Swork, I AND R
+        ##### CREATE THE NEW VALUES FOR S, S_v, I AND R
         ###################################################
-        S_new = S - transitionings['S'][0] - S_work_to_home[0]
-        # print("- transitionings S",-transitionings['S'][0],  "- S_work_to_home[0]", -S_work_to_home[0])
-        S_work_new =  matmul_2D_3D_matrix(S_new, M)
-        I_new = I + transitionings['S'][0] + S_work_to_home[0] - transitionings['I'][0]
-        # print("- transitionings I",-transitionings['I'][0])
+
+        S_new = S - transitionings['S'][0] - S_v_to_home[0]
+        S_new = np.where(S_new < 0, 0, S_new)
+
+        S_v_new =  matmul_2D_3D_matrix(S_new, M)
+        I_new = I + transitionings['S'][0] + S_v_to_home[0] - transitionings['I'][0]
         R_new = R + transitionings['I'][0]
         
-        return(S_new,S_work_new, I_new, R_new)
+        return(S_new,S_v_new, I_new, R_new)
     
 # helper function
 def matmul_2D_3D_matrix(X, W):
