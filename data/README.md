@@ -10,10 +10,10 @@
 
 + `social_contacts_weekend.xlsx` : Social contact data for Belgium, sheets were used to denote contact duration. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/). Dataset: Belgium 2010 (Van Hoang 2020). Contacts Sat-Sun. Includes physical contacts only. An integration of the contacts with the contact duration is performed in the sheet named 'integrated'. Extracted using [SOCRATES](http://www.socialcontactdata.org/socrates/).
 
-### Vaccines
+### Literature
 
-+ `antoine_etal_archpublichealth_2010` : Title: 'Influenza vaccination recording system in Belgium'. Of interest: Table 1. Reported vaccination coverage by age group, situation on 31 March 2010.
-+ `goeyvaerts_etal_epidemics_2015.pdf` : Title: 'Estimating dynamic transmission model parameters for seasonal influenza by fitting to age and season-specific influenza-like illness incidence'. Of interest: Section 2.2.4 Vaccination coverage and vaccine efficacy.
++ `antoine_etal_archpublichealth_2010.pdf` : Title: 'Influenza vaccination recording system in Belgium'. Of interest: Table 1. Reported vaccination coverage by age group and Belgian region, on 31 March 2010.
++ `goeyvaerts_etal_epidemics_2015.pdf` : Title: 'Estimating dynamic transmission model parameters for seasonal influenza by fitting to age and season-specific influenza-like illness incidence'. Of interest: Section 2.2.4 Vaccination coverage and vaccine efficacy. Reference Beutels et al. 2013 also points to large differences in vaccination incidence between Flanders and Wallonia.
 
 ### Demography
 
@@ -42,6 +42,10 @@ Folder contains the shape files of the 581 Belgian municipalities. Retrieved fro
 + `georef-belgium-municipality-millesime.dbf` contains the associated metadata.
 
 ## Interim
+
+### Vaccination
+
++ `vaccination_municipalities_2010.csv` : contains the vaccination coverage in all 581 (post-2019 fusion) Belgian municipality and per age group (0-5, 5-15, 15-65, 65+). All municipalities located in the same region have the same vaccination coverage. However, vaccination coverage differs significantly per Belgian region: Flanders (10.2%), Wallonia (1.5%) and Brussels (1.9%). Made using the data in Table 1 of `data/raw/literature/antoine_etal_archpublichealth_2010.pdf` using the script `analysis/data_conversion/make_vaccination_coverage.py`.
 
 ### Demography
 
