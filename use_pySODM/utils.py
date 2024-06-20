@@ -124,3 +124,33 @@ def construct_coordinates_dictionary():
                    'location': list(pd.read_csv(os.path.join(os.getcwd(),'../data/interim/census_2011/demography_municipalities_2011_sorted.csv'))['NIS'].values)
                     }
     return coordinates
+
+import geopandas as gpd
+
+def load_shapefiles():
+    gdf = gpd.read_file('../data/raw/shape/georef-belgium-municipality-millesime.shp')
+    gdf = gdf[gdf['year'] == '2021']
+    gdf = gdf.sort_values(by='mun_code')
+    return gdf
+
+def visualise_logstate_on_map(ax, gdf, simout, t, X, time_dimension_name='time', spatial_dimension_name='location',
+                           plot_kwargs={'cmap': 'OrRd', 'linewidth': 0.5, 'edgecolor': 'black', 'legend': False, 'vmin': 0, 'vmax': 5}):
+    """ Use geopandas to plot a model state on a Belgian map
+    """
+
+    # aggregate all dimensions that are not the spatial axis
+    simout_cp = simout.sel({time_dimension_name: t})[X]
+    dimensions = [name for name in simout_cp.dims if name != spatial_dimension_name]
+    for dim in dimensions:
+        simout_cp = simout_cp.sum(dim=dim)
+
+    # add simulation to geopandas dataframe
+    gdf[X] = np.log10(simout_cp.values+1e-9)
+
+    # make the map
+    ax = gdf.plot(column=X, ax=ax, **plot_kwargs)
+
+    # disable axis
+    ax.set_axis_off()
+
+    return ax

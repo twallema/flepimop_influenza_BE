@@ -13,7 +13,9 @@ from utils import name2NIS, \
                     construct_initial_infected, \
                         construct_coordinates_dictionary, \
                             construct_initial_susceptible, \
-                                get_contact_matrix, get_mobility_matrix
+                                get_contact_matrix, get_mobility_matrix, \
+                                    visualise_logstate_on_map, \
+                                        load_shapefiles
 
 #################
 ## Setup model ##
@@ -80,35 +82,18 @@ plt.close()
 ## Make a GIF ##
 ################
 
-import geopandas as gpd
-from matplotlib.colors import Normalize
-import matplotlib.cm as cm
-
-# load shapefiles and sort dataframe
-gdf = gpd.read_file('../data/raw/shape/georef-belgium-municipality-millesime.shp')
-gdf = gdf[gdf['year'] == '2021']
-gdf = gdf.sort_values(by='mun_code')
-
-# loop over timesteps in simulation
+gdf = load_shapefiles()
 frames = []
+# loop over timesteps and make frames
 for t in out['time'].values:
-    # extract simulation and add to geopandas dataframe
-    gdf['I'] = np.log10(out.sel(time=t).sum(dim='age')['I'].values+1e-9)
 
-    # make the map
     fig,ax = plt.subplots(nrows=2, figsize=(8.3/2,11.7/3), height_ratios=[3, 1])
-    gdf.plot(column='I',  
-            cmap='OrRd',  # Choose a color map
-            linewidth=0.5,
-            edgecolor='black',
-            legend=False,
-            ax=ax[0],
-            vmin=0,
-            vmax=5,
-            )
-    ax[0].set_axis_off()
+
+    # make map
+    ax[0] = visualise_logstate_on_map(ax[0], gdf, out, t, 'I')
     ax[0].set_title(f'SIR model with commuter mobility\nt = {t} days')
-    # plot the states
+    
+    # plot the normalised states
     ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['S']/11.5e6*100, color='green', label='S')
     ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['I']/11.5e6*100, color='red', label='I')
     ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['R']/11.5e6*100, color='black', label='R')
@@ -121,21 +106,23 @@ for t in out['time'].values:
     ax[1].legend(loc=1, framealpha=1, prop={'size': 8})
     ax[1].tick_params(axis='both', which='major', labelsize=8)
 
-    output_dir = 'frame'
+    # save frame
+    output_dir = 'frames'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     frame_path = os.path.join(output_dir, f'frame_{t:03d}.png')
     frames.append(frame_path)
     plt.savefig(frame_path, bbox_inches='tight', dpi=150)
-    plt.close(fig)
+    plt.close()
 
+# compile in a gif
 import imageio
-# Step 5: Create a GIF from the saved frames
 with imageio.get_writer('simulation.gif', mode='I', duration=1) as writer:
     for frame_path in frames:
         image = imageio.imread(frame_path)
         writer.append_data(image)
 
-# Optionally, remove the frame files after creating the GIF
+# remove the frames after creating the GIF
 for frame_path in frames:
     os.remove(frame_path)
+os.rmdir(output_dir)
