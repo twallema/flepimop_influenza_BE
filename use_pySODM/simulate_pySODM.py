@@ -96,7 +96,7 @@ for t in out['time'].values:
     gdf['I'] = np.log10(out.sel(time=t).sum(dim='age')['I'].values+1e-9)
 
     # make the map
-    fig,ax = plt.subplots(nrows=2, figsize=(8.3,11.7/1.5), height_ratios=[3, 1])
+    fig,ax = plt.subplots(nrows=2, figsize=(8.3/2,11.7/3), height_ratios=[3, 1])
     gdf.plot(column='I',  
             cmap='OrRd',  # Choose a color map
             linewidth=0.5,
@@ -109,23 +109,24 @@ for t in out['time'].values:
     ax[0].set_axis_off()
     ax[0].set_title(f'SIR model with commuter mobility\nt = {t} days')
     # plot the states
-    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['S']/11.5e6*100, color='green', label='Susceptible')
-    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['I']/11.5e6*100, color='red', label='Infected')
-    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['R']/11.5e6*100, color='black', label='Removed')
+    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['S']/11.5e6*100, color='green', label='S')
+    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['I']/11.5e6*100, color='red', label='I')
+    ax[1].plot(out.sel(time=range(t)).sum(dim=['age','location'])['R']/11.5e6*100, color='black', label='R')
     ax[1].set_xlim([0,120])
     ax[1].set_ylim([0,100])
-    ax[1].set_xlabel('time (days)')
-    ax[1].set_ylabel('fraction of population (%)')
+    ax[1].set_xlabel('time (days)', fontsize=8)
+    ax[1].set_ylabel('population (%)', fontsize=8)
     ax[1].spines['top'].set_visible(False)
     ax[1].spines['right'].set_visible(False)
-    ax[1].legend(loc=1, framealpha=1)
+    ax[1].legend(loc=1, framealpha=1, prop={'size': 8})
+    ax[1].tick_params(axis='both', which='major', labelsize=8)
 
     output_dir = 'frame'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     frame_path = os.path.join(output_dir, f'frame_{t:03d}.png')
     frames.append(frame_path)
-    plt.savefig(frame_path, bbox_inches='tight', dpi=200)
+    plt.savefig(frame_path, bbox_inches='tight', dpi=150)
     plt.close(fig)
 
 import imageio
