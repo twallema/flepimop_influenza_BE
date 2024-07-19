@@ -1,4 +1,4 @@
-subpop,mc_name,amount
+subpop,mc_infection_stage,amount
 11001,I,0
 11001,R,0
 11001,S,14222

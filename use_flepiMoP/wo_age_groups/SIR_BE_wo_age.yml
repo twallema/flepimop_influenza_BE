@@ -26,8 +26,6 @@ seir:
       value: 0.03
     gamma:
       value: 0.2
-    f_v:
-      value: 0.1
     N:
       value: 17
   transitions:
@@ -35,7 +33,7 @@ seir:
       destination: ["I"]
       rate: ["beta * N"]
       proportional_to: [["S"],["I"]]
-      proportion_exponent: ["1","1"]
+      proportion_exponent: ["1","1"]      
     - source: ["I"]
       destination: ["R"]
       rate: ["gamma"]
