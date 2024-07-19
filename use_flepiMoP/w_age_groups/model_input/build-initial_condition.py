@@ -29,7 +29,7 @@ data = pd.read_csv(data_dir, index_col=[0,1])
 # desired format: 'subpop', 'mc_age', 'mc_infection_stage' (=disease states), 'amount'
 subpops = data.index.get_level_values('NIS').unique()
 ages = data.index.get_level_values('age').unique()
-ages_desired = ['0-5', '5-15', '15-65', '65+']
+ages_desired = ['age0to5', 'age5to15', 'age15to65', 'age65to120']
 mc_infection_stages = ['S', 'I', 'R']
 idx = pd.MultiIndex.from_product([subpops, ages_desired, mc_infection_stages], names=['subpop', 'mc_age', 'mc_infection_stage'])
 new_data = pd.Series(0, index=idx, name='amount')
