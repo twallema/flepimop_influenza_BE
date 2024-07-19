@@ -42,6 +42,18 @@ for subpop in subpops:
 # place the initial infected in Aarlen (random age group)
 new_data.loc[NIS_init, random.choice(ages_desired), 'I'] = 1
 
+# now make a column 'mc_name' containing the disease state and age groups linked with an underscore
+new_data = new_data.reset_index()
+new_data['mc_name'] = new_data['mc_infection_stage'] + '_' + new_data['mc_age']
+
+# pop the old 'mc_age' and 'mc_infection_stage' columns
+del new_data['mc_age']
+del new_data['mc_infection_stage']
+
+# rearrange columns
+new_data = new_data.loc[:,['subpop','mc_name','amount']]
+new_data = new_data.set_index('subpop')
+
 ##########
 ## save ##
 ##########
