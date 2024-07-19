@@ -30,17 +30,18 @@ params = {'beta': 0.03,                                 # infectivity (-)
           'N': get_contact_matrix(),                    # contact matrix
           'M': get_mobility_matrix()                    # origin-destination mobility matrix
           }
+
 # initial states
-I0 = construct_initial_infected(loc='Aarlen', n=2, agedist='demographic')
+I0 = construct_initial_infected(loc='Aarlen', n=1, agedist='random')
 S0 = construct_initial_susceptible(I0)
 init_states = {'S': S0,
-               'S_v': np.matmul(S0, params['M']),
+               #'S_v': np.matmul(S0, params['M']),
                'I': I0
                }
 
 # initialize model
-from models import spatial_TL_SIR
-model = spatial_TL_SIR(states=init_states, parameters=params, coordinates=coordinates)
+from models import spatial_ODE_SIR
+model = spatial_ODE_SIR(states=init_states, parameters=params, coordinates=coordinates)
 
 
 ####################
@@ -67,11 +68,11 @@ ax[1].plot(out['time'], out['I'].sum(dim='age').sel({'location': name2NIS('Chima
 ax[1].plot(out['time'], out['I'].sum(dim='age').sel({'location': name2NIS('De Panne')}), linestyle = '--', color='red', alpha=0.8, label='De Panne')
 ax[1].legend(loc=1, framealpha=1)
 
-ax[2].set_title('Infected per age group')
-ax[2].plot(out['time'], out['I'].sel({'age': '0-5', 'location': name2NIS('Koksijde')}), linestyle = '-', color='red', alpha=0.8, label='0-5')
-ax[2].plot(out['time'], out['I'].sel({'age': '5-15', 'location': name2NIS('Koksijde')}), linestyle = ':', color='red', alpha=0.8, label='5-15')
-ax[2].plot(out['time'], out['I'].sel({'age': '15-65', 'location': name2NIS('Koksijde')}), linestyle = '--', color='red', alpha=0.8, label='15-65')
-ax[2].plot(out['time'], out['I'].sel({'age': '65+', 'location': name2NIS('Koksijde')}), linestyle = '-', color='black', alpha=0.8, label='65+')
+ax[2].set_title('Infected per age group (Aarlen)')
+ax[2].plot(out['time'], out['I'].sel({'age': '0-5', 'location': name2NIS('Aarlen')}), linestyle = '-', color='red', alpha=0.8, label='0-5')
+ax[2].plot(out['time'], out['I'].sel({'age': '5-15', 'location': name2NIS('Aarlen')}), linestyle = ':', color='red', alpha=0.8, label='5-15')
+ax[2].plot(out['time'], out['I'].sel({'age': '15-65', 'location': name2NIS('Aarlen')}), linestyle = '--', color='red', alpha=0.8, label='15-65')
+ax[2].plot(out['time'], out['I'].sel({'age': '65+', 'location': name2NIS('Aarlen')}), linestyle = '-', color='black', alpha=0.8, label='65+')
 ax[2].legend(loc=1, framealpha=1)
 
 plt.tight_layout()

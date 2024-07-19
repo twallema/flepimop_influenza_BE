@@ -20,14 +20,14 @@ compartments:
 seir:
   integration:
     method: rk4
-    dt: 1.0
+    dt: 0.1
   parameters:
     beta:
       value: 0.03
     gamma:
       value: 0.2
     N:
-      value: 17
+      value: 24.08
   transitions:
     - source: ["S"]
       destination: ["I"]

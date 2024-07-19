@@ -1,7 +1,7 @@
 name: spatial_SIR
 setup_name: BE
 start_date: 2024-01-01
-end_date: 2024-05-01
+end_date: 2024-08-01
 nslots: 1
 
 subpop_setup:
@@ -19,30 +19,215 @@ compartments:
 seir:
   integration:
     method: rk4
-    dt: 1.0
+    dt: 0.5
   parameters:
     beta:
       value: 0.03
     gamma:
       value: 0.2
   transitions:
+    # # S --> I
+    # - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
+    #   destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
+    #   proportional_to: [
+    #     "source",
+    #     [
+    #       [["I"]],
+    #       [["age0to5", "age5to15", "age15to65", "age65to120"],
+    #        ["age0to5", "age5to15", "age15to65", "age65to120"],
+    #        ["age0to5", "age5to15", "age15to65", "age65to120"],
+    #        ["age0to5", "age5to15", "age15to65", "age65to120"]]
+    #     ]
+    #   ]
+    #   rate: [["beta"], ["24.8","39.9","22.1","10.3"]]
+    #   proportion_exponent: [
+    #     [["1"],"1"], # this corresponds to the source. the first 1 in brackets here corresponds to infection state (with brackets because only one stage), and the second 1 corresponds to the age strata of the source
+    #     [["1"],"1"]] # this corresponds to the destination proportional to.
+
     # S --> I
-    - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
-      destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
+    # ages 0-5
+    - source: [["S"], ["age0to5"]]
+      destination: [["I"], ["age0to5"]]
       proportional_to: [
         "source",
         [
           [["I"]],
-          [["age0to5", "age5to15", "age15to65", "age65to120"],
-           ["age0to5", "age5to15", "age15to65", "age65to120"],
-           ["age0to5", "age5to15", "age15to65", "age65to120"],
-           ["age0to5", "age5to15", "age15to65", "age65to120"]]
+          [["age0to5",]]
         ]
       ]
-      rate: [["beta"], ["24.8","39.9","22.1","10.3"]]
-      proportion_exponent: [
-        [["1"],"1"], # this corresponds to the source. the first 1 in brackets here corresponds to infection state (with brackets because only one stage), and the second 1 corresponds to the age strata of the source
-        [["1"],"1"]] # this corresponds to the destination proportional to.
+      rate: [["beta"], ["9.9"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age0to5"]]
+      destination: [["I"], ["age0to5"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age5to15",]]
+        ]
+      ]
+      rate: [["beta"], ["3.6"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age0to5"]]
+      destination: [["I"], ["age0to5"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age15to65",]]
+        ]
+      ]
+      rate: [["beta"], ["10.3"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age0to5"]]
+      destination: [["I"], ["age0to5"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age65to120",]]
+        ]
+      ]
+      rate: [["beta"], ["1.0"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+
+    # ages 5-15
+    - source: [["S"], ["age5to15"]]
+      destination: [["I"], ["age5to15"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age0to5",]]
+        ]
+      ]
+      rate: [["beta"], ["1.9"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age5to15"]]
+      destination: [["I"], ["age5to15"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age5to15",]]
+        ]
+      ]
+      rate: [["beta"], ["23.3"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age5to15"]]
+      destination: [["I"], ["age5to15"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age15to65",]]
+        ]
+      ]
+      rate: [["beta"], ["13.0"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age5to15"]]
+      destination: [["I"], ["age5to15"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age65to120",]]
+        ]
+      ]
+      rate: [["beta"], ["1.1"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+
+    # ages 15-65
+    - source: [["S"], ["age15to65"]]
+      destination: [["I"], ["age15to65"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age0to5",]]
+        ]
+      ]
+      rate: [["beta"], ["0.9"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age15to65"]]
+      destination: [["I"], ["age15to65"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age5to15",]]
+        ]
+      ]
+      rate: [["beta"], ["2.2"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age15to65"]]
+      destination: [["I"], ["age15to65"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age15to65",]]
+        ]
+      ]
+      rate: [["beta"], ["17.7"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age15to65"]]
+      destination: [["I"], ["age15to65"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age65to120",]]
+        ]
+      ]
+      rate: [["beta"], ["1.3"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+
+    # ages 65-120
+    - source: [["S"], ["age65to120"]]
+      destination: [["I"], ["age65to120"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age0to5",]]
+        ]
+      ]
+      rate: [["beta"], ["0.3"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age65to120"]]
+      destination: [["I"], ["age65to120"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age5to15",]]
+        ]
+      ]
+      rate: [["beta"], ["0.7"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age65to120"]]
+      destination: [["I"], ["age65to120"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age15to65",]]
+        ]
+      ]
+      rate: [["beta"], ["4.9"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
+    - source: [["S"], ["age65to120"]]
+      destination: [["I"], ["age65to120"]]
+      proportional_to: [
+        "source",
+        [
+          [["I"]],
+          [["age65to120",]]
+        ]
+      ]
+      rate: [["beta"], ["4.4"]]
+      proportion_exponent: [[["1"],"1"], [["1"],"1"]]
 
     # I --> R
     - source: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
