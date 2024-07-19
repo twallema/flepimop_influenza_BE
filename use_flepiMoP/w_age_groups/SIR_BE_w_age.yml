@@ -1,0 +1,75 @@
+name: spatial_SIR
+setup_name: BE
+start_date: 2024-01-01
+end_date: 2024-05-01
+nslots: 1
+
+subpop_setup:
+  geodata: model_input/demography.csv
+  mobility: model_input/mobility.csv
+
+initial_conditions:
+  method: SetInitialConditions
+  initial_conditions_file: model_input/initial_condition.csv
+  allow_missing_subpops: TRUE
+  allow_missing_compartments: TRUE
+
+compartments:
+  infection_stage: ["S", "I", "R"]
+  age: ["0-5", "5-15", "15-65", "65+"]
+
+seir:
+  integration:
+    method: rk4
+    dt: 1.0
+  parameters:
+    beta:
+      value: 0.03
+    gamma:
+      value: 0.2
+    N:
+      value: 17
+  transitions:
+    # TODO: Use shorthand
+    # S --> I
+    - source: ["S", "0-5"]
+      destination: ["I", "0-5"]
+      proportional_to: [[["S","0-5"]], [["I","0-5"],["I","5-15"],["I","15-65"],["I","65+"]]]
+      rate: ["beta*24.8"]
+      proportion_exponent: [1]
+    - source: ["S", "5-15"]
+      destination: ["I", "5-15"]
+      proportional_to: [[["S","5-15"]], [["I","0-5"],["I","5-15"],["I","15-65"],["I","65+"]]]
+      rate: ["beta*39.9"]
+      proportion_exponent: [1]
+    - source: ["S", "15-65"]
+      destination: ["I", "15-65"]
+      proportional_to: [[["S","15-65"]], [["I","0-5"],["I","5-15"],["I","15-65"],["I","65+"]]]
+      rate: ["beta*22.1"]
+      proportion_exponent: [1]
+    - source: ["S", "65+"]
+      destination: ["I", "65+"]
+      proportional_to: [[["S","65+"]], [["I","0-5"],["I","5-15"],["I","15-65"],["I","65+"]]]
+      rate: ["beta*10.3"]
+      proportion_exponent: [1]
+    # I --> R
+    - source: ["I", "0-5"]
+      destination: ["R", "0-5"]
+      proportional_to: [[["I","0-5"]]]
+      rate: ["gamma"]
+      proportion_exponent: [1]
+    - source: ["I", "5-15"]
+      destination: ["R", "5-15"]
+      proportional_to: [[["I","5-15"]]]
+      rate: ["gamma"]
+      proportion_exponent: [1]
+    - source: ["I", "15-65"]
+      destination: ["R", "15-65"]
+      proportional_to: [[["I","15-65"]]]
+      rate: ["gamma"]
+      proportion_exponent: [1]
+    - source: ["I", "65+"]
+      destination: ["R", "65+"]
+      proportional_to: [[["I","65+"]]]
+      rate: ["gamma"]
+      proportion_exponent: [1]
