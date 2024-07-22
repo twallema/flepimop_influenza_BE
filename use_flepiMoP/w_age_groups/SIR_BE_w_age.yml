@@ -1,7 +1,7 @@
 name: spatial_SIR
 setup_name: BE
 start_date: 2024-01-01
-end_date: 2024-08-01
+end_date: 2024-05-01
 nslots: 1
 
 subpop_setup:
@@ -78,7 +78,7 @@ seir:
     #     [["1"],"1"], # this corresponds to the source. the first 1 in brackets here corresponds to infection state (with brackets because only one stage), and the second 1 corresponds to the age strata of the source
     #     [["1"],"1"]] # this corresponds to the destination proportional to.
 
-  # # S --> I # New infections caused by contact with infecteds in age0to5
+  # S --> I # New infections caused by contact with infecteds in age0to5
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       proportional_to: [
@@ -93,7 +93,7 @@ seir:
         ["1",["1","1","1","1"]], 
         ["1",["1","1","1","1"]]] 
   
-  # # S --> I # New infections caused by contact with infecteds in age5to15
+  # S --> I # New infections caused by contact with infecteds in age5to15
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       proportional_to: [
@@ -108,7 +108,7 @@ seir:
         ["1",["1","1","1","1"]], 
         ["1",["1","1","1","1"]]] 
   
-  # # S --> I # New infections caused by contact with infecteds in age15to65
+  # S --> I # New infections caused by contact with infecteds in age15to65
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       proportional_to: [
@@ -123,7 +123,7 @@ seir:
         ["1",["1","1","1","1"]], 
         ["1",["1","1","1","1"]]] 
   
-  # # S --> I # New infections caused by contact with infecteds in age65to120
+  # S --> I # New infections caused by contact with infecteds in age65to120
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       proportional_to: [
