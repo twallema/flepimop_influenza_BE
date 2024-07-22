@@ -104,13 +104,15 @@ def get_mobility_matrix():
     rel_dir = '../data/interim/census_2011/mobility_municipalities_2011_sorted.csv'
     mobility = pd.read_csv(os.path.join(os.getcwd(),rel_dir), index_col=0).values
 
-    # get 2011 demography and normalise
-    # From overall BE demography 2011 --> 54% of population is between 20-60 years old
-    # TODO: technically you should do this at the municipality level
+    # get 2011 demography and normalise to obtain the fraction traveling
     rel_dir = '../data/interim/census_2011/demography_municipalities_2011_sorted.csv'
     demography = pd.read_csv(os.path.join(os.getcwd(),rel_dir), index_col=0)['inhabitants'].values
 
-    return mobility / demography[:, None] / 0.54
+    # flepiMoP doesn't allow on-diagonal mobility
+    # this makes it impossible to model that people may stay on their "home" patch to go to work
+    np.fill_diagonal(mobility, 0)
+
+    return mobility / demography[:, None]
 
 def get_contact_matrix():
     rel_dir = '../data/raw/contacts/belgium_2010_all.xlsx'
