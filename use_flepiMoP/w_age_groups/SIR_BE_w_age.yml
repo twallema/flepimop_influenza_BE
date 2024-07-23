@@ -58,25 +58,6 @@ seir:
     c_age65to120_age65to120:
       value: 4.4      
   transitions:
-    # # S --> I
-    # The following S --> I transition is equivalent to
-    # S_age0to5 --> I_age0to5 \isprop beta*\sum_j N_ij * S_age0to5 * (I_age0to5 + I_age5to15 + I_age15to65 + I_age65to120)
-    # - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
-    #   destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
-    #   proportional_to: [
-    #     "source",
-    #     [
-    #       [["I"]],
-    #       [["age0to5", "age5to15", "age15to65", "age65to120"],
-    #        ["age0to5", "age5to15", "age15to65", "age65to120"],
-    #        ["age0to5", "age5to15", "age15to65", "age65to120"],
-    #        ["age0to5", "age5to15", "age15to65", "age65to120"]]
-    #     ]
-    #   ]
-    #   rate: [["beta"], ["24.8","39.9","22.1","10.3"]]
-    #   proportion_exponent: [
-    #     [["1"],"1"], # this corresponds to the source. the first 1 in brackets here corresponds to infection state (with brackets because only one stage), and the second 1 corresponds to the age strata of the source
-    #     [["1"],"1"]] # this corresponds to the destination proportional to.
 
   # S --> I # New infections caused by contact with infecteds in age0to5
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
