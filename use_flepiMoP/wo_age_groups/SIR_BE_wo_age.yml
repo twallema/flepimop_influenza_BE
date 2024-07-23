@@ -20,7 +20,7 @@ compartments:
 seir:
   integration:
     method: rk4
-    dt: 0.1
+    dt: 1.0
   parameters:
     beta:
       value: 0.03
