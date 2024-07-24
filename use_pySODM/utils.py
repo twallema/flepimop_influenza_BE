@@ -108,11 +108,15 @@ def get_mobility_matrix():
     rel_dir = '../data/interim/census_2011/demography_municipalities_2011_sorted.csv'
     demography = pd.read_csv(os.path.join(os.getcwd(),rel_dir), index_col=0)['inhabitants'].values
 
-    # flepiMoP doesn't allow on-diagonal mobility
-    # this makes it impossible to model that people may stay on their "home" patch to go to work
+    # normalise mobility matrix
+    mobility /= demography[:, None]
+    
+    # assume on-diagonal = 1 - traveling to match flepi implementation
     np.fill_diagonal(mobility, 0)
+    rowsum = mobility.sum(axis=1)
+    np.fill_diagonal(mobility, 1-rowsum)
 
-    return mobility / demography[:, None]
+    return mobility
 
 def get_contact_matrix():
     rel_dir = '../data/raw/contacts/belgium_2010_all.xlsx'
