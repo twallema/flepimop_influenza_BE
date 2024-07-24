@@ -59,8 +59,8 @@ seir:
       value: 4.4      
   transitions:
     # S --> I
-    The following S --> I transition is equivalent to
-    S_age0to5 --> I_age0to5 \isprop beta*\sum_j N_ij * S_age0to5 * (I_age0to5 + I_age5to15 + I_age15to65 + I_age65to120)
+    #The following S --> I transition is equivalent to
+    #S_age0to5 --> I_age0to5 \isprop beta*\sum_j N_ij * S_age0to5 * (I_age0to5 + I_age5to15 + I_age15to65 + I_age65to120)
     - source: [["S"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       proportional_to: [
