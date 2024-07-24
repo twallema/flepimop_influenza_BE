@@ -25,38 +25,7 @@ seir:
       value: 0.03
     gamma:
       value: 0.2
-    c_age0to5_age0to5:
-      value: 9.9
-    c_age0to5_age5to15:
-      value: 3.6
-    c_age0to5_age15to65:
-      value: 10.3
-    c_age0to5_age65to120:
-      value: 1.0
-    c_age5to15_age0to5:
-      value: 1.9
-    c_age5to15_age5to15:
-      value: 23.3
-    c_age5to15_age15to65:
-      value: 13.0
-    c_age5to15_age65to120:
-      value: 1.1
-    c_age15to65_age0to5:
-      value: 0.9
-    c_age15to65_age5to15:
-      value: 2.2
-    c_age15to65_age15to65:
-      value: 17.7
-    c_age15to65_age65to120:
-      value: 1.3
-    c_age65to120_age0to5:
-      value: 0.3
-    c_age65to120_age5to15:
-      value: 0.7
-    c_age65to120_age15to65:
-      value: 4.9
-    c_age65to120_age65to120:
-      value: 4.4      
+   
   transitions:
     # S --> I
     #The following S --> I transition is equivalent to
