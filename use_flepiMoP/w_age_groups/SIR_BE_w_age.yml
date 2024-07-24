@@ -119,20 +119,6 @@ seir:
         ["1",["1","1","1","1"]], 
         ["1",["1","1","1","1"]]]
 
-    # The transition above is equivalent to the longer format:
-    # # S --> I
-    - source: [["S"], ["age0to5"]]
-      destination: [["I"], ["age0to5"]]
-      proportional_to: [
-        "source",
-        [
-          [["I"]],
-          [["age0to5"]]
-        ]
-      ]
-      rate: [["beta"], ["c_age0to5_age0to5"]]
-      proportion_exponent: [[["1"], "1"], [["1"], "1"]]
-
     # I --> R
     - source: [["I"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
       destination: [["R"], ["age0to5", "age5to15", "age15to65", "age65to120"]]
