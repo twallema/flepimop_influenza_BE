@@ -39,7 +39,7 @@ init_states = {'S': S0,
                }
 
 # initialize model
-from models import spatial_ODE_SIR_tf as my_model
+from models import spatial_ODE_SIR as my_model
 model = my_model(states=init_states, parameters=params, coordinates=coordinates)
 
 ####################
