@@ -42,7 +42,7 @@ seir:
            ["age0to5", "age5to15", "age15to65", "age65to120"]]
         ]
       ]
-      rate: [["beta"], ["24.8","39.9","22.1","10.3"]]
+      rate: [["beta"], ["24.8/4","39.9/4","22.1/4","10.3/4"]]
       proportion_exponent: [
         [["1"],"1"], # this corresponds to the source. the first 1 in brackets here corresponds to infection state (with brackets because only one stage), and the second 1 corresponds to the age strata of the source
         [["1"],"1"]] # this corresponds to the destination proportional to.

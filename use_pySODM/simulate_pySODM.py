@@ -28,21 +28,19 @@ params = {'beta': 0.03,                                 # infectivity (-)
           'gamma': 5,                                   # duration of infection (d)
           'f_v': 0.1,                                   # fraction of total contacts on visited patch
           'N': get_contact_matrix(),                    # contact matrix
-          'M': get_mobility_matrix()                    # origin-destination mobility matrix
+          'M': get_mobility_matrix(),                   # origin-destination mobility matrix
           }
 
 # initial states
 I0 = construct_initial_infected(loc='Aarlen', n=1, agedist='random')
 S0 = construct_initial_susceptible(I0)
 init_states = {'S': S0,
-               #'S_v': np.matmul(S0, params['M']),
                'I': I0
                }
 
 # initialize model
-from models import spatial_ODE_SIR
-model = spatial_ODE_SIR(states=init_states, parameters=params, coordinates=coordinates)
-
+from models import spatial_ODE_SIR as my_model
+model = my_model(states=init_states, parameters=params, coordinates=coordinates)
 
 ####################
 ## simulate model ##
