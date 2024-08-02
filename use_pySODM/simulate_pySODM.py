@@ -60,13 +60,13 @@ ax[0].plot(out['time'], out['I'].sum(dim=['age', 'location']), color='red', alph
 ax[0].plot(out['time'], out['R'].sum(dim=['age', 'location']), color='black', alpha=0.8, label='R')
 ax[0].legend(loc=1, framealpha=1)
 
-ax[1].set_title('Infected')
+ax[1].set_title('Infected by spatial patch (assorted)')
 ax[1].plot(out['time'], out['I'].sum(dim='age').sel({'location': name2NIS('Aarlen')}), linestyle = '-', color='red', alpha=0.8, label='Aarlen')
 ax[1].plot(out['time'], out['I'].sum(dim='age').sel({'location': name2NIS('Chimay')}), linestyle = ':', color='red', alpha=0.8, label='Chimay')
 ax[1].plot(out['time'], out['I'].sum(dim='age').sel({'location': name2NIS('De Panne')}), linestyle = '--', color='red', alpha=0.8, label='De Panne')
 ax[1].legend(loc=1, framealpha=1)
 
-ax[2].set_title('Infected per age group (Aarlen)')
+ax[2].set_title('Infected by age group (Aarlen)')
 ax[2].plot(out['time'], out['I'].sel({'age': '0-5', 'location': name2NIS('Aarlen')}), linestyle = '-', color='red', alpha=0.8, label='0-5')
 ax[2].plot(out['time'], out['I'].sel({'age': '5-15', 'location': name2NIS('Aarlen')}), linestyle = ':', color='red', alpha=0.8, label='5-15')
 ax[2].plot(out['time'], out['I'].sel({'age': '15-65', 'location': name2NIS('Aarlen')}), linestyle = '--', color='red', alpha=0.8, label='15-65')
